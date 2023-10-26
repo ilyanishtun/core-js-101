@@ -204,15 +204,18 @@ function extractEmails(str) {
  *
  */
 function getRectangleString(width, height) {
+  if (width < 2 || height < 2) {
+    return 'Invalid dimensions';
+  }
+
   const horizontalBorder = '─'.repeat(width - 2);
   const verticalSpaces = ' '.repeat(width - 2);
   const topBorder = `┌${horizontalBorder}┐\n`;
-  const middlePart = `|${verticalSpaces}|\n`.repeat(height - 2);
-  const bottomBorder = `└${horizontalBorder}┘`;
+  const middlePart = `│${verticalSpaces}│\n`.repeat(height - 2);
+  const bottomBorder = `└${horizontalBorder}┘\n`;
 
   return topBorder + middlePart + bottomBorder;
 }
-
 
 /**
  * Encode specified string with ROT13 cipher
@@ -230,8 +233,29 @@ function getRectangleString(width, height) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  let result = '';
+
+  // Перебираем каждый символ во входной строке
+  for (let i = 0; i < str.length; i += 1) {
+    // Получаем текущий символ
+    const char = str[i];
+
+    // Проверяем, является ли символ буквой (или не буквой)
+    if (/^[a-zA-Z]$/.test(char)) {
+      // Если символ - буква, изменяем его по правилу ROT13
+      // Для этого находим ASCII код 'A' или 'a' в зависимости от регистра
+      const offset = char <= 'Z' ? 65 : 97;
+      // Находим новый символ по формуле ROT13 и добавляем его к результату
+      result += String.fromCharCode(((char.charCodeAt(0) - offset + 13) % 26) + offset);
+    } else {
+      // Если символ не буква, добавляем его к результату без изменений
+      result += char;
+    }
+  }
+
+  // Возвращаем закодированную строку
+  return result;
 }
 
 /**
@@ -247,8 +271,8 @@ function encodeToRot13(/* str */) {
  *   isString('test') => true
  *   isString(new String('test')) => true
  */
-function isString(/* value */) {
-  throw new Error('Not implemented');
+function isString(value) {
+  return typeof value === 'string' || value instanceof String;
 }
 
 
@@ -276,8 +300,15 @@ function isString(/* value */) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const cards = [
+    'A♣', '2♣', '3♣', '4♣', '5♣', '6♣', '7♣', '8♣', '9♣', '10♣', 'J♣', 'Q♣', 'K♣',
+    'A♦', '2♦', '3♦', '4♦', '5♦', '6♦', '7♦', '8♦', '9♦', '10♦', 'J♦', 'Q♦', 'K♦',
+    'A♥', '2♥', '3♥', '4♥', '5♥', '6♥', '7♥', '8♥', '9♥', '10♥', 'J♥', 'Q♥', 'K♥',
+    'A♠', '2♠', '3♠', '4♠', '5♠', '6♠', '7♠', '8♠', '9♠', '10♠', 'J♠', 'Q♠', 'K♠',
+  ];
+
+  return cards.indexOf(value);
 }
 
 
